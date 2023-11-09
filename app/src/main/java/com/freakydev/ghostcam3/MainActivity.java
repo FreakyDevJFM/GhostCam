@@ -23,7 +23,7 @@ public class MainActivity extends CameraActivity {
 
     private CameraBridgeViewBase mOpenCvCameraView;
     private BackgroundSubtractorMOG2 subMOG2;
-    private final static double LEARNING_RATE = 0.01;
+    private double LEARNING_RATE = 0;
     private Mat backgroundFrame;
     private Mat currentFrame;
     private boolean applyEffect = false;
@@ -44,6 +44,7 @@ public class MainActivity extends CameraActivity {
             applyEffect = true;
             backgroundFrame = currentFrame;
             MOG2Subbing();
+            startButton.setText("Reset");
         });
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.HelloOpenCvView);
@@ -77,13 +78,40 @@ public class MainActivity extends CameraActivity {
     private void MOG2Subbing(){
         subMOG2 = Video.createBackgroundSubtractorMOG2();
         backgroundFrame = new Mat();
-        // You can configure some parameters. For example:
-        //subMOG2.setDetectShadows(false);
+    }
+
+    private void MOG2Setting(){
+        double backgroundRatioValue=0;
+        double complexityReductionThresholdValue=0;
+        boolean detectShadowsValue = false;
+        int historyValue=0;
+        int nMixturesValue=0;
+        double shadowThresholdValue=0;
+        int shadowValue=0;
+        double varInitValue=0;
+        double varMaxValue=0;
+        double varMinValue=0;
+        double varThresholdValue=0;
+        double varThresholdGenValue=0;
+
+        subMOG2.setBackgroundRatio(backgroundRatioValue);
+        subMOG2.setComplexityReductionThreshold(complexityReductionThresholdValue);
+        subMOG2.setDetectShadows(detectShadowsValue);
+        subMOG2.setHistory(historyValue);
+        subMOG2.setNMixtures(nMixturesValue);
+        subMOG2.setShadowThreshold(shadowThresholdValue);
+        subMOG2.setShadowValue(shadowValue);
+        subMOG2.setVarInit(varInitValue);
+        subMOG2.setVarMax(varMaxValue);
+        subMOG2.setVarMin(varMinValue);
+        subMOG2.setVarThreshold(varThresholdValue);
+        subMOG2.setVarThresholdGen(varThresholdGenValue);
     }
 
     public Mat process(Mat inputImage) {
-        subMOG2.apply(inputImage, backgroundFrame, LEARNING_RATE);
-        return backgroundFrame;
+        Mat foreground = backgroundFrame;
+        subMOG2.apply(inputImage, foreground, LEARNING_RATE);
+        return foreground;
     }
 
     private void getPermission(){
